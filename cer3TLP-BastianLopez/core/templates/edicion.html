@@ -1,0 +1,58 @@
+{% extends "./baseEvento2.html" %}
+
+{% block title %} Edición de Evento {% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2>Edición de Evento</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="/api/editarEvento/" method="POST">{% csrf_token %}
+                    <!-- Campo oculto para el ID del evento -->
+                    <input type="hidden" id="idEvento" name="idEvento" value="{{ evento.id }}">
+                    
+                    <!-- Campo de nombre -->
+                    <div class="form-group">
+                        <input type="text" id="txtNombre" name="txtNombre" value="{{ evento.nombre }}" 
+                               class="form-control" placeholder="Nombre del Evento" maxlength="100" required>
+                    </div>
+
+                    <!-- Campo de comentarios -->
+                    <div class="form-group">
+                        <textarea id="txtComentarios" name="txtComentarios" 
+                                  class="form-control" placeholder="Comentarios opcionales" maxlength="255">{{ evento.comentarios }}</textarea>
+                    </div>
+
+                    <!-- Campo de fecha de inicio -->
+                    <div class="form-group">
+                        <label for="dateInicio">Fecha de Inicio:</label>
+                        <input type="date" id="dateInicio" name="dateInicio" 
+                               class="form-control" value="{{ evento.fecha_inicio }}" required>
+                    </div>
+
+                    <!-- Campo de fecha de fin -->
+                    <div class="form-group">
+                        <label for="dateFin">Fecha de Fin:</label>
+                        <input type="date" id="dateFin" name="dateFin" 
+                               class="form-control" value="{{ evento.fecha_fin }}" required>
+                    </div>
+
+                    <!-- Campo de tipo -->
+                    <div class="form-group">
+                        <input type="text" id="txtTipo" name="txtTipo" value="{{ evento.tipo }}" 
+                               class="form-control" placeholder="Tipo de Evento" maxlength="50" required>
+                    </div>
+
+                    <!-- Botón de guardar -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

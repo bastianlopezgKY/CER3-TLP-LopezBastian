@@ -1,0 +1,53 @@
+{% extends "./base.html" %}
+
+{% block title %}Gestión de Cursos{% endblock %}
+
+{% block content %}
+
+<div class="table-responsive py-2">
+    <h1>Listado de Eventos</h1>
+
+    <!-- Formulario para filtrar por tipo de evento -->
+    <form method="GET" action="" class="form-inline mb-3">
+        <label for="tipo_evento" class="mr-2">Filtrar por tipo:</label>
+        <select name="tipo_evento" id="tipo_evento" class="form-control mr-2">
+            <option value="">Todos</option>
+            {% for tipo, descripcion in TIPO_EVENTO %}
+            <option value="{{ tipo }}" {% if request.GET.tipo_evento == tipo %}selected{% endif %}>{{ descripcion }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Aplicar</button>
+    </form>
+
+    <!-- Tabla de eventos -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Comentarios</th>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Fin</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in eventos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ evento.nombre }}</td>
+                <td>{{ evento.comentarios }}</td>
+                <td>{{ evento.fecha_inicio }}</td>
+                <td>{{ evento.fecha_fin }}</td>
+                <td>{{ evento.get_tipo_display }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay eventos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

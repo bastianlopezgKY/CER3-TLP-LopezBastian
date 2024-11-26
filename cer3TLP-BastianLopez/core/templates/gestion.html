@@ -1,0 +1,103 @@
+{% extends "./base.html" %}
+
+{% block title %} Gestión de Cursos {% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Formulario de registro -->
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{ message }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <h2>Registrar Evento</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="/api/registrarEvento/" method="POST">{% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre del Evento" maxlength="100" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="txtComentarios" name="txtComentarios" class="form-control" placeholder="Comentarios opcionales" maxlength="255"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateInicio">Fecha de Inicio:</label>
+                        <input type="date" id="dateInicio" name="dateInicio" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateFin">Fecha de Fin:</label>
+                        <input type="date" id="dateFin" name="dateFin" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtTipo">Tipo de Evento:</label>
+                        <select id="txtTipo" name="txtTipo" class="form-control" required>
+                            <option value="">Seleccione un tipo</option>
+                            {% for tipo, descripcion in TIPO_EVENTO %}
+                            <option value="{{ tipo }}">{{ descripcion }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de eventos con filtro -->
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h1>Listado de Eventos</h1>
+
+        <!-- Formulario para filtrar por tipo de evento -->
+        <form method="GET" action="" class="form-inline mb-3">
+            <label for="tipo_evento" class="mr-2">Filtrar por tipo:</label>
+            <select name="tipo_evento" id="tipo_evento" class="form-control mr-2">
+                <option value="">Todos</option>
+                {% for tipo, descripcion in TIPO_EVENTO %}
+                <option value="{{ tipo }}" {% if request.GET.tipo_evento == tipo %}selected{% endif %}>{{ descripcion }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Aplicar</button>
+        </form>
+
+        <div class="table-responsive py-2">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Comentarios</th>
+                        <th>Fecha de Inicio</th>
+                        <th>Fecha de Fin</th>
+                        <th>Tipo</th>
+                        <th colspan="2">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ evento.nombre }}</td>
+                        <td>{{ evento.comentarios }}</td>
+                        <td>{{ evento.fecha_inicio }}</td>
+                        <td>{{ evento.fecha_fin }}</td>
+                        <td>{{ evento.get_tipo_display }}</td>
+                        {% if es_admin_academico %}
+                        <td><a href="edicionEvento/{{ evento.id }}" class="btn btn-info">Editar</a></td>
+                        <td><a href="eliminacionEvento/{{ evento.id }}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                        {% else %}
+                        <td colspan="2" class="text-center">Sin permisos</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
